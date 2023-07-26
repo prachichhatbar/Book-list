@@ -1,24 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+// App.js
+import React, { useEffect } from 'react';
+import { Provider, useDispatch } from 'react-redux';
+import store from './store';
+import { setBooks } from './store/reducers/bookReducer';
+
+import BookList from './components/BookList';
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    fetch('http://nyx.vima.ekt.gr:3000/api/books', {
+      method: 'POST', 
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        page: 1,
+        itemsPerPage: 20,
+        filters: []
+      }),
+    })
+    .then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error('Error:', error));
+  }, [dispatch]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Provider store={store}>
+      <div className="App">
+        <BookList />
+      </div>
+    </Provider>
   );
 }
 
